@@ -1,3 +1,4 @@
+import hashlib
 from django.db import models
 
 # Create your models here. (DB related)
@@ -14,8 +15,3 @@ class Message(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     user = models.CharField(max_length=200)
-
-class User(models.Model):
-    name = models.CharField(max_length=200)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
