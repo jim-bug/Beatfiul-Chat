@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Cristian Spata, Ignazio Leonardo Calogero Sperandeo">
+
+    <title>BeautifulChat - Chats</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- Custom styles for this template -->
+    {% load static %}
+    <link href="{% static 'beautiful_chat/index.css' %}" rel="stylesheet">
+    <style>
+      .chat-list-container {
+        height: 100vh;
+        overflow-y: auto;
+        background-color: #444;
+        padding: 1rem;
+        flex: 0 0 25%;
+      }
+      .chat-list-container .btn {
+        width: 100%;
+      }
+      .chat-content {
+        flex: 1;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+      }
+      body {
+        display: flex;
+        margin: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <div class="chat-list-container">
+      <h1 class="h4">Chats</h1>
+      <button type="button" class="btn btn-light mb-3" id="create-chat">+ Create a new chat</button>
+      <div class="list-group">
+        <!-- Django template tag for rendering chat list -->
+        {% for chat in chats %}
+          <a href="/chats/{{ chat.chat_id }}" class="list-group-item list-group-item-action">
+            {{ chat.name }}
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="chat-content">
+      <div>
+        <h2>Welcome to BeautifulChat</h2>
+        <p>Select a chat from the list to start messaging.</p>
+      </div>
+    </div>
+
+    <footer class="mastfoot mt-auto text-center">
+      <div class="inner flex-container">
+        <p>Scritto da <a href="https://github.com/Kuriix">Cristian Spata</a> e <a href="https://github.com/jim-bug">Ignazio Leonardo Calogero Sperandeo</a>
+          <a href="https://github.com/jim-bug/Beautiful-Chat">
+            <img class="github_icon" src="{% static 'beautiful_chat/github-mark-white.png' %}" alt="GitHub Logo">
+          </a>
+        </p>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
+    <script>
+        // Add event listener to create chat button
+        document.getElementById('create-chat').addEventListener('click', function() {
+            var chatName = prompt('Enter the chat name');
+            if(!chatName) return;
+            fetch('/chats/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.cookie.split('; ').find(row => row.startsWith('csrftoken=')).split('=')[1]
+                },
+                body: JSON.stringify({chat_name: chatName})
+            }).then(function(response) {
+                if(response.ok) {
+                    location.reload();
+                }
+            }).catch(function(error) {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
