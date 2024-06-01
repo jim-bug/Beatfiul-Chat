@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django.http import JsonResponse
-from beautiful_chat.models import Chat
+from beautiful_chat.models import Chat, UserProfile
 
 # Handle /
 def index(request):
@@ -22,7 +22,8 @@ def chats(request: ASGIRequest, chat_id = None):
     chats = Chat.objects.all()
     # order chats by the most recently updated
     chats = sorted(chats, key=lambda chat: chat.updated_at, reverse=True)
-    return render(request, 'chats.html', {'chats': chats})
+    profile = UserProfile.objects.get(user=request.user)
+    return render(request, 'chats.html', {'chats': chats, 'profile': profile})
 
 @login_required
 def new_chat(request: ASGIRequest):
