@@ -26,6 +26,7 @@ urlpatterns = [
     path('chats/<str:chat_id>/', views.chats),
     path('profile_picture/<str:hash>', profile.profile_picture),
     path('profile_picture/', profile.profile_picture),
+    path('profile/', profile.view_profile),
     path('login/', profile.loginRoute),
     path('logout/', profile.logoutRoute),
     path('register/', profile.register),
