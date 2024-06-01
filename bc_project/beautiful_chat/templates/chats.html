@@ -38,13 +38,30 @@
         display: flex;
         margin: 0;
       }
+
+      @media (min-width: 48em) {
+        .chat-title {
+          margin-bottom: 1rem;
+          float: left;
+        }
+        .profile-link {
+          top: 1rem;
+          right: 1rem;
+          max-width: 2rem;
+          max-height: 2rem;
+          float: right;
+        }
+      }
     </style>
   </head>
 
   <body>
 
     <div class="chat-list-container">
-      <h1 class="h4">Chats</h1>
+      <div>
+        <h1 class="h4 chat-title"><a href="../">../</a>Chats</h1>
+        <a href="/profile" class="profile-link"><img src="/{{ profile.profile_picture }}" alt="Profile" class="img-thumbnail"></a>
+      </div>
       <button type="button" class="btn btn-light mb-3" id="create-chat">+ Create a new chat</button>
       <div class="list-group">
         <!-- Django template tag for rendering chat list -->
