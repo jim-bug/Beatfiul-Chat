@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django.http import JsonResponse
-from beautiful_chat.models import Chat, UserProfile
+from beautiful_chat.models import Chat, UserProfile, Message
 
 # Handle /
 def index(request):
@@ -46,3 +46,20 @@ def new_chat(request: ASGIRequest):
     chat.save()
     # redirect to the new chat
     return redirect(f'/chats/{chat_id}/')
+
+
+@login_required
+def incoming_message(request: ASGIRequest, chat_id: str):
+    data = request.body.decode('utf-8')
+    data = json.loads(data)
+    message = data.get('message')
+    if message is None:
+        return JsonResponse({'error': 'message is required'}, status=400)
+    if len(message) > 2000:
+        return JsonResponse({'error': 'message must be less than 2000 characters'}, status=400)
+    chat = Chat.objects.get(chat_id=chat_id)
+    chat.messages.append({'username': request.user.username, 'message': message})
+    msg = Message(chat=chat, text=message, user=request.user.username)
+    msg.save()
+    chat.save()
+    return JsonResponse({'success': True})
