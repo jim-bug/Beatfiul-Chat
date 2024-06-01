@@ -1,4 +1,4 @@
-import json, random
+import json, random, html, datetime
 from django.shortcuts import render, redirect
 from django.core.handlers.asgi import ASGIRequest
 from django.views.decorators.csrf import csrf_protect
@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django.http import JsonResponse
 from beautiful_chat.models import Chat, UserProfile, Message
+from .websockets import send_message_to_chat
 
 # Handle /
 def index(request):
@@ -25,6 +26,8 @@ def chats(request: ASGIRequest, chat_id = None):
     # if chat_id is not None, redirect to the chat page
     if chat_id is not None:
         chat = Chat.objects.filter(chat_id=chat_id).first()
+        if chat is None:
+            return render(request, 'chats.html', {'chats': chats, 'profile': profile})
         messages = Message.objects.filter(chat=chat)
         return render(request, 'chats.html', {'chats': chats, 'chat_id': chat_id,
                 'messages': messages, 'profile': profile})
@@ -55,16 +58,25 @@ def message_handler(request: ASGIRequest, chat_id: str):
         data = request.body.decode('utf-8')
         data = json.loads(data)
         message = data.get('message')
-        if message is None:
+        if message is None or message.strip() == '':
             return JsonResponse({'error': 'message is required'}, status=400)
+        # sanitize the message to prevent XSS
+        message = html.escape(message)
         if len(message) > 2000:
             return JsonResponse({'error': 'message must be less than 2000 characters'}, status=400)
+        # send the message to the connected clients
+        event = {
+            'text': message,
+            'user': request.user.username,
+            'created_at': datetime.datetime.now().isoformat()
+        }
         chat = Chat.objects.get(chat_id=chat_id)
         msg = Message(chat=chat, text=message, user=request.user.username)
+        send_message_to_chat(chat_id, event)
         msg.save()
         chat.save()
         return JsonResponse({'success': True})
     elif request.method == 'GET':
         chat = Chat.objects.get(chat_id=chat_id)
-        messages = Message.objects.filter(chat=chat)
+        messages = list(Message.objects.filter(chat=chat).values())
         return JsonResponse({'messages': messages})

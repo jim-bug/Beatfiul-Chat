@@ -26,20 +26,20 @@
         background-color: #444;
         justify-content: left;
         padding: 1rem;
-        flex: 0 0 25%;
+        flex: 0 0 20%;
       }
       .chat-list-container .btn {
         width: 100%;
       }
 
       .main-container {
-        display: flex;
-        justify-content: center;
+        height: 100vh;
+        justify-content: right;
         background-color: #333;
         color: #fff;
-        /*position: relative;*/
-        /* center */
         width: 100%;
+        padding: .2rem;
+        flex: 0 0 80%;
       }
 
       .btn-group {
@@ -87,6 +87,12 @@
 
       .message small {
           color: #ccc;
+      }
+
+      .message-content {
+          margin-top: 0.5rem;
+        /* don't exceed parent size */
+        overflow:auto
       }
 
       #message-form {
@@ -165,12 +171,7 @@
             {% if chat_id %}
                 <h1 class="h4">{{ chat_name }}</h1>
                 <div class="chat-messages">
-                    {% for message in messages %}
-                        <div class="message">
-                            <p>{{ message.text }}</p>
-                            <small>{{ message.user }} - {{ message.created_at }}</small>
-                        </div>
-                    {% endfor %}
+                    <!-- Messages list -->
                 </div>
                 <!-- Create the emoji buttons -->
                 <div class="btn-group" role="group" aria-label="Emoji buttons">
@@ -200,6 +201,8 @@
     
     <script>
         const csrftoken = "{{ csrf_token }}";
+        const chatMessages = document.querySelector('.chat-messages');
+
         // Add event listener to create chat button
         document.getElementById('create-chat').addEventListener('click', function() {
             var chatName = prompt('Enter the chat name');
@@ -218,46 +221,84 @@
             });
         });
 
-        // Add event listener for emoji buttons
-        document.querySelectorAll('.emoji-button').forEach(function(button) {
-            button.addEventListener('click', function() {
-                var messageInput = document.getElementById('message');
-                messageInput.value += button.textContent;
+        if(chatMessages) {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Add event listener for emoji buttons
+            document.querySelectorAll('.emoji-button').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var messageInput = document.getElementById('message');
+                    messageInput.value += button.textContent;
+                });
             });
-        });
 
-        function newMessage(content, user, created_at) {
+            function newMessage(content, user, created_at) {
+                var message = document.createElement('div');
+                message.classList.add('message');
+                message.innerHTML = `
+                    <small><img class="img-thumbnail profile-link" src="/profile_picture/${user}.png"><b>${user}</b> - ${created_at}</small>
+                    <p class="message-content">${content}</p>
+                `;
+                document.querySelector('.chat-messages').appendChild(message);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
 
-        }
+            // Add event listener to submit message button
+            function sendMessage() {
+                var message = document.getElementById('message').value;
+                if(!message) return;
+                $.ajax({
+                    url: '/chats/{{ chat_id }}/message/',
+                    type: 'POST',
+                    data: JSON.stringify({message: message}),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    success: function() {
+                        document.getElementById('message').value = '';
+                    }
+                });
+            }
 
-        // Add event listener to submit message button
-        function sendMessage() {
-            var message = document.getElementById('message').value;
-            if(!message) return;
-            $.ajax({
-                url: '/chats/{{ chat_id }}/message/',
-                type: 'POST',
-                data: JSON.stringify({message: message}),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrftoken
-                },
-                success: function() {
-                    location.reload();
+            document.getElementById('message-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+                sendMessage();
+            });
+
+            document.getElementById('message').addEventListener('keydown', function(event) {
+                if(event.key === 'Enter') {
+                    sendMessage();
                 }
             });
+
+            // When page loads, get the messages
+            $.ajax({
+                url: '/chats/{{ chat_id }}/message/',
+                type: 'GET',
+                success: function(data) {
+                    data.messages.forEach(function(message) {
+                        message.created_at = new Date(message.created_at.replace('p.m.', 'PM')).toLocaleString();
+                        newMessage(message.text, message.user, message.created_at);
+                    });
+                }
+            });
+
+            // Start a WebSocket connection
+            var ws = new WebSocket('ws://{{ request.get_host }}/ws/chats/{{ chat_id }}/');
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                data.created_at = new Date(data.created_at).toLocaleString();
+                newMessage(data.text, data.user, data.created_at);
+            };
+            ws.onclose = function() {
+                console.log('WebSocket connection closed');
+                ws = new WebSocket('ws://{{ request.get_host }}/ws/chats/{{ chat_id }}/');
+            };
+            ws.onerror = function(err) {
+                console.log('WebSocket connection error', err);
+            };
         }
-
-        document.getElementById('message-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            sendMessage();
-        });
-
-        document.getElementById('message').addEventListener('keydown', function(event) {
-            if(event.key === 'Enter') {
-                sendMessage();
-            }
-        });
     </script>
 </body>
 </html>
