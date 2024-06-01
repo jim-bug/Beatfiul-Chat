@@ -73,27 +73,26 @@
     </footer>
 
     <!-- Bootstrap core JavaScript -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     
     <script>
+        const csrftoken = "{{ csrf_token }}";
         // Add event listener to create chat button
         document.getElementById('create-chat').addEventListener('click', function() {
             var chatName = prompt('Enter the chat name');
             if(!chatName) return;
-            fetch('/chats/create', {
-                method: 'POST',
+            $.ajax({
+                url: '/chats/create/',
+                type: 'POST',
+                data: JSON.stringify({chat_name: chatName}),
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': document.cookie.split('; ').find(row => row.startsWith('csrftoken=')).split('=')[1]
+                    'X-CSRFToken': csrftoken
                 },
-                body: JSON.stringify({chat_name: chatName})
-            }).then(function(response) {
-                if(response.ok) {
+                success: function() {
                     location.reload();
                 }
-            }).catch(function(error) {
-                console.error('Error:', error);
             });
         });
     </script>

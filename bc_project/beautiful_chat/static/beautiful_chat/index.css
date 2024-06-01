@@ -87,11 +87,19 @@ body {
 }
 
 @media (min-width: 48em) {
-  .github_link {
-    float: right;
-  }
-}
+    .masthead-brand {
+      float: left;
+    }
+    .nav-masthead {
+      float: right;
+    }
 
+    .github_link {
+      display: flex;
+      align-items: center;
+    }
+}
+  
 
 /*
  * Cover

@@ -1,0 +1,1 @@
+django channels daphne whitenoise 

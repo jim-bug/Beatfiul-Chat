@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path
 
 from beautiful_chat import views
 
@@ -24,5 +24,8 @@ urlpatterns = [
     path('chats/', views.chats),
     path('chats/create/', views.new_chat),
     path('chats/<str:chat_id>/', views.chats),
+    path('login/', views.loginRoute),
+    path('logout/', views.logoutRoute),
+    path('register/', views.register),
     path('', views.index)
 ]
