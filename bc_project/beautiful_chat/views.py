@@ -60,7 +60,6 @@ def message_handler(request: ASGIRequest, chat_id: str):
         if len(message) > 2000:
             return JsonResponse({'error': 'message must be less than 2000 characters'}, status=400)
         chat = Chat.objects.get(chat_id=chat_id)
-        chat.messages.append({'username': request.user.username, 'message': message})
         msg = Message(chat=chat, text=message, user=request.user.username)
         msg.save()
         chat.save()
