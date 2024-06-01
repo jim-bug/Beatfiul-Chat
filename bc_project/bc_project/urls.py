@@ -17,15 +17,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from beautiful_chat import views
+from beautiful_chat import views, profile
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('chats/', views.chats),
     path('chats/create/', views.new_chat),
     path('chats/<str:chat_id>/', views.chats),
-    path('login/', views.loginRoute),
-    path('logout/', views.logoutRoute),
-    path('register/', views.register),
+    path('profile_picture/<str:hash>', profile.profile_picture),
+    path('profile_picture/', profile.profile_picture),
+    path('login/', profile.loginRoute),
+    path('logout/', profile.logoutRoute),
+    path('register/', profile.register),
     path('', views.index)
 ]
