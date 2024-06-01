@@ -1,1 +1,4 @@
-django channels daphne whitenoise 
+django 
+channels 
+daphne 
+whitenoise 
