@@ -50,7 +50,7 @@ def new_chat(request: ASGIRequest):
 
 
 @login_required
-def incoming_message(request: ASGIRequest, chat_id: str):
+def message_handler(request: ASGIRequest, chat_id: str):
     if request.method == 'POST':
         data = request.body.decode('utf-8')
         data = json.loads(data)
