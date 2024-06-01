@@ -25,6 +25,7 @@ urlpatterns = [
     path('chats/', views.chats),
     path('chats/create/', views.new_chat),
     path('chats/<str:chat_id>/', views.chats),
+    path('chats/<str:chat_id>/message/', views.message_handler),
     path('profile_picture/<str:username>', profile.profile_picture),
     path('profile_picture/', profile.profile_picture),
     path('profile/', profile.view_profile),

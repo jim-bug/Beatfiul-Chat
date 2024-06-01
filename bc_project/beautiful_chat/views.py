@@ -50,8 +50,8 @@ def new_chat(request: ASGIRequest):
 
 
 @login_required
-def message_handler(request: ASGIRequest, chat_id: str):
-    if request.method != 'POST':
+def incoming_message(request: ASGIRequest, chat_id: str):
+    if request.method == 'POST':
         data = request.body.decode('utf-8')
         data = json.loads(data)
         message = data.get('message')
@@ -69,4 +69,3 @@ def message_handler(request: ASGIRequest, chat_id: str):
         chat = Chat.objects.get(chat_id=chat_id)
         messages = Message.objects.filter(chat=chat)
         return JsonResponse({'messages': messages})
-
