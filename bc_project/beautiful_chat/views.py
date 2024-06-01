@@ -24,7 +24,8 @@ def chats(request: ASGIRequest, chat_id = None):
 
     # if chat_id is not None, redirect to the chat page
     if chat_id is not None:
-        messages = Chat.objects.get(chat_id=chat_id).messages
+        chat = Chat.objects.filter(chat_id=chat_id).first()
+        messages = Message.objects.filter(chat=chat)
         return render(request, 'chats.html', {'chats': chats, 'chat_id': chat_id,
                 'messages': messages, 'profile': profile})
     # main chats page
