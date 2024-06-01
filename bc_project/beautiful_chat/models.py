@@ -16,3 +16,13 @@ class Message(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     user = models.CharField(max_length=200)
+
+class ProfilePictures(models.Model):
+    user = models.CharField(max_length=200)
+    hash = models.CharField(max_length=200)
+    image = models.BinaryField()
+
+    @staticmethod
+    def get_hash(user):
+        return hashlib.md5(user.encode()).hexdigest()
+

@@ -15,9 +15,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+<<<<<<< HEAD
 from django.urls import path, re_path
 from . import consumers
 from beautiful_chat import views
+=======
+from django.urls import path
+
+from beautiful_chat import views, profile
+>>>>>>> d213a0e43bb7044791e08e054b177669b168bc81
 
 
 
@@ -30,10 +36,20 @@ urlpatterns = [
     path('chats/', views.chats),
     path('chats/create/', views.new_chat),
     path('chats/<str:chat_id>/', views.chats),
+<<<<<<< HEAD
     path('login/', views.loginRoute),
     path('logout/', views.logoutRoute),
     path('register/', views.register),
     path('', views.index),
     websocket_urlpatterns[0]
 
+=======
+    path('profile_picture/<str:hash>', profile.profile_picture),
+    path('profile_picture/', profile.profile_picture),
+    path('profile/', profile.view_profile),
+    path('login/', profile.loginRoute),
+    path('logout/', profile.logoutRoute),
+    path('register/', profile.register),
+    path('', views.index)
+>>>>>>> d213a0e43bb7044791e08e054b177669b168bc81
 ]
