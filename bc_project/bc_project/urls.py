@@ -32,3 +32,7 @@ urlpatterns = [
     path('register/', profile.register),
     path('', views.index)
 ]
+
+websocket_urlpatterns = [
+    path('ws/chats/<str:chat_id>/', views.ChatConsumer.as_asgi()),
+]
