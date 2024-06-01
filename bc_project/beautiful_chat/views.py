@@ -16,13 +16,18 @@ def index(request):
 def chats(request: ASGIRequest, chat_id = None):
     if(request.method == 'POST' and chat_id is None):
         return new_chat(request)
-    if chat_id is not None:
-        # TODO
-        return JsonResponse({'error': 'Not implemented'}, status=501)
+    
     chats = Chat.objects.all()
     # order chats by the most recently updated
     chats = sorted(chats, key=lambda chat: chat.updated_at, reverse=True)
     profile = UserProfile.objects.get(user=request.user)
+
+    # if chat_id is not None, redirect to the chat page
+    if chat_id is not None:
+        messages = Chat.objects.get(chat_id=chat_id).messages
+        return render(request, 'chats.html', {'chats': chats, 'chat_id': chat_id,
+                'messages': messages, 'profile': profile})
+    # main chats page
     return render(request, 'chats.html', {'chats': chats, 'profile': profile})
 
 @login_required

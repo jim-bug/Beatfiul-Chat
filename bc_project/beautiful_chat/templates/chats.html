@@ -15,29 +15,107 @@
     {% load static %}
     <link href="{% static 'beautiful_chat/index.css' %}" rel="stylesheet">
     <style>
+
+      body {
+        justify-content: unset;
+      }
+
       .chat-list-container {
         height: 100vh;
         overflow-y: auto;
         background-color: #444;
+        justify-content: left;
         padding: 1rem;
         flex: 0 0 25%;
       }
       .chat-list-container .btn {
         width: 100%;
       }
-      .chat-content {
-        flex: 1;
-        padding: 2rem;
+
+      .main-container {
+        display: flex;
+        justify-content: center;
+        background-color: #333;
+        color: #fff;
+        /*position: relative;*/
+        /* center */
+        width: 100%;
+      }
+
+      .btn-group {
+        margin-top: 1rem;
+        width: 100%;
+      }
+
+    /* BEGIN OF CHAT CSS */
+    
+    .chat-content {
+        flex: auto;
+        padding: 1rem;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         color: #fff;
+        margin-bottom: 5rem;
+        height: 90vh;
       }
-      body {
-        display: flex;
-        margin: 0;
+
+      .chat-content h1 {
+          margin-bottom: 1rem;
       }
+
+      .chat-messages {
+          width: 100%;
+          height: 100%;
+          overflow-y: auto;
+          padding: 1rem;
+          background-color: #555;
+          border-radius: 0.5rem;
+      }
+
+      .message {
+          background-color: #666;
+          padding: 1rem;
+          margin-bottom: 1rem;
+          border-radius: 0.5rem;
+      }
+
+      .message p {
+          margin-bottom: 0.5rem;
+      }
+
+      .message small {
+          color: #ccc;
+      }
+
+      #message-form {
+          width: 100%;
+          margin-top: 2rem;
+      }
+
+      #message-form .input-group {
+          width: 100%;
+      }
+
+      #message-form input {
+          border-radius: 0.5rem 0 0 0.5rem;
+      }
+
+      #message-form button {
+          border-radius: 0 0.5rem 0.5rem 0;
+      }
+
+      .chat-title {
+          margin-bottom: 1rem;
+      }
+
+      .emoji-button {
+          font-size: 1.5rem;
+          margin-inline: 0.2rem;
+      }
+
+      /* END OF CHAT CSS */
 
       @media (min-width: 48em) {
         .chat-title {
@@ -47,8 +125,9 @@
         .profile-link {
           top: 1rem;
           right: 1rem;
-          max-width: 2rem;
-          max-height: 2rem;
+          max-width: 3rem;
+          max-height: 3rem;
+          margin-bottom: 1rem;
           float: right;
         }
       }
@@ -72,23 +151,41 @@
         {% endfor %}
       </div>
     </div>
-    <div class="chat-content">
-      <div>
-        <h2>Welcome to BeautifulChat</h2>
-        <p>Select a chat from the list to start messaging.</p>
-      </div>
+
+    <div class="main-container">
+        <div class="chat-content">
+            {% if chat_id %}
+                <h1 class="h4">{{ chat_name }}</h1>
+                <div class="chat-messages">
+                    {% for message in messages %}
+                        <div class="message">
+                            <p>{{ message.text }}</p>
+                            <small>{{ message.user }} - {{ message.created_at }}</small>
+                        </div>
+                    {% endfor %}
+                </div>
+                <!-- Create the emoji buttons -->
+                <div class="btn-group" role="group" aria-label="Emoji buttons">
+                    <button type="button" class="btn btn-secondary emoji-button">😀</button>
+                    <button type="button" class="btn btn-secondary emoji-button">😂</button>
+                    <button type="button" class="btn btn-secondary emoji-button">😍</button>
+                    <button type="button" class="btn btn-secondary emoji-button">😎</button>
+                    <button type="button" class="btn btn-secondary emoji-button">😡</button>
+                </div>
+                <form id="message-form">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="message" placeholder="Type a message" required>
+                        <button class="btn btn-secondary" type="submit">Send</button>
+                    </div>
+                </form>
+            {% else %}
+            <div>
+                <h2>Welcome to BeautifulChat</h2>
+                <p>Select a chat from the list to start messaging.</p>
+            </div> 
+            {% endif %}
+        </div>
     </div>
-
-    <footer class="mastfoot mt-auto text-center">
-      <div class="inner flex-container">
-        <p>Scritto da <a href="https://github.com/Kuriix">Cristian Spata</a> e <a href="https://github.com/jim-bug">Ignazio Leonardo Calogero Sperandeo</a>
-          <a href="https://github.com/jim-bug/Beautiful-Chat">
-            <img class="github_icon" src="{% static 'beautiful_chat/github-mark-white.png' %}" alt="GitHub Logo">
-          </a>
-        </p>
-      </div>
-    </footer>
-
     <!-- Bootstrap core JavaScript -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

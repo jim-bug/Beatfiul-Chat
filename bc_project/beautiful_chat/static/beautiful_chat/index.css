@@ -66,6 +66,11 @@ body {
   border-bottom: .25rem solid transparent;
 }
 
+.img-thumbnail {
+  background-color: transparent;
+  padding: 0%;
+}
+
 .nav-masthead .nav-link:hover,
 .nav-masthead .nav-link:focus {
   border-bottom-color: rgba(255, 255, 255, .25);

@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path
 
 from beautiful_chat import views, profile
+from .consumers import ChatConsumer
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,5 +35,5 @@ urlpatterns = [
 ]
 
 websocket_urlpatterns = [
-    path('ws/chats/<str:chat_id>/', views.ChatConsumer.as_asgi()),
+    path('ws/chats/<str:chat_id>/', ChatConsumer.as_asgi()),
 ]
