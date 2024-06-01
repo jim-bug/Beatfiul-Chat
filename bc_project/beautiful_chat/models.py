@@ -1,6 +1,5 @@
 import hashlib
 from django.db import models
-from django.contrib.auth.models import User as DjangoUser
 
 # Create your models here. (DB related)
 class Chat(models.Model):
@@ -18,9 +17,12 @@ class Message(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     user = models.CharField(max_length=200)
 
-class User(DjangoUser):
-    profile_picture_hash = models.CharField(max_length=200, default='')
+class ProfilePictures(models.Model):
+    user = models.CharField(max_length=200)
+    hash = models.CharField(max_length=200)
+    image = models.BinaryField()
 
-    def get_profile_picture_url(self):
-        return f'/profile_picture/{self.profile_picture_hash}'
+    @staticmethod
+    def get_hash(user):
+        return hashlib.md5(user.encode()).hexdigest()
 

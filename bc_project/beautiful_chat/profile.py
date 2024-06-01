@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.core.handlers.asgi import ASGIRequest
 from django.contrib.auth import login, logout
 from django.http import JsonResponse
-from .models import User
+from django.contrib.auth.models import User
 
 
 # Handle /login/
