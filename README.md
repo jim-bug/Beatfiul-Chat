@@ -1,4 +1,4 @@
-# Beautifiul-Chat
+# Beautiful-Chat
 Una chat bellissima.
 
 ## Come eseguire il progetto
